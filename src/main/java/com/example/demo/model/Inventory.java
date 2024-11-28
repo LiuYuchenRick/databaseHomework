@@ -13,6 +13,10 @@ public class Inventory {
 
     private String name;
     private int stock;
+    private double price;
+    private String imageUrl;
+    private int minStock;
+    private int salesCount;
 
     // Getters and Setters
     public Long getId() {
@@ -37,5 +41,37 @@ public class Inventory {
 
     public void setStock(int stock) {
         this.stock = stock;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
+    public int getMinStock() {
+        return minStock;
+    }
+
+    public void setMinStock(int minStock) {
+        this.minStock = minStock;
+    }
+
+    public int getSalesCount() {
+        return salesCount;
+    }
+
+    public void setSalesCount(int salesCount) {
+        this.salesCount = salesCount;
     }
 }
