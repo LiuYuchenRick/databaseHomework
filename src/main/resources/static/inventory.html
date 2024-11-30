@@ -3,160 +3,169 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>仓库管理系统 - 库存</title>
+    <title>库存管理 - 仓库管理系统</title>
     <link rel="stylesheet" href="styles.css">
     <style>
         .inventory-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
             gap: 20px;
             padding: 20px;
         }
 
         .inventory-item {
             background: white;
-            border-radius: 8px;
             padding: 15px;
-            text-align: center;
+            border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            transition: transform 0.2s;
-        }
-
-        .inventory-item:hover {
-            transform: translateY(-5px);
+            position: relative;
         }
 
         .item-image {
-            width: 150px;
             height: 150px;
-            background: pink;  /* 临时用粉色背景代替图片 */
-            margin: 0 auto 10px;
-            border-radius: 8px;
+            background: #f0f0f0;
+            margin-bottom: 10px;
+            border-radius: 4px;
         }
 
         .item-name {
             font-size: 1.1em;
             font-weight: bold;
-            margin: 10px 0;
+            margin-bottom: 8px;
         }
 
         .item-stock {
             color: #666;
-            margin: 5px 0;
+            margin-bottom: 8px;
         }
 
         .item-price {
             color: #e44d26;
             font-weight: bold;
-            margin: 5px 0;
-        }
-
-        .order-btn {
-            background: #4CAF50;
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-
-        .order-btn:hover {
-            background: #45a049;
+            margin-bottom: 12px;
         }
 
         .quantity-control {
             display: flex;
-            justify-content: center;
             align-items: center;
             gap: 10px;
-            margin: 10px 0;
+            margin-bottom: 12px;
         }
 
         .quantity-btn {
-            background: #f0f0f0;
+            width: 30px;
+            height: 30px;
             border: none;
-            width: 25px;
-            height: 25px;
-            border-radius: 50%;
+            background: #007BFF;
+            color: white;
+            border-radius: 4px;
             cursor: pointer;
         }
 
+        .quantity-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
         .quantity-display {
-            font-weight: bold;
+            min-width: 40px;
+            text-align: center;
+        }
+
+        .order-btn {
+            width: 100%;
+            padding: 8px;
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .order-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .low-stock {
+            color: #ffc107;
+        }
+
+        .out-of-stock {
+            color: #dc3545;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- Navigation Bar -->
         <header class="navbar">
             <h1>仓库管理系统</h1>
         </header>
         
-        <!-- Sidebar -->
         <aside class="sidebar">
             <ul>
-                <li><a href="index.html">报表</a></li>
+                <li><a href="index.html">畅销产品</a></li>
                 <li><a href="inventory.html">库存</a></li>
+                <li><a href="manage-inventory.html">库存管理</a></li>
             </ul>
         </aside>
 
-        <!-- Main Content -->
         <main class="main-content">
-            <div class="inventory-grid">
-                <!-- 示例商品 1 -->
-                <div class="inventory-item">
-                    <div class="item-image"></div>
-                    <div class="item-name">商品 A</div>
-                    <div class="item-stock">库存: 100</div>
-                    <div class="item-price">¥99.00</div>
-                    <div class="quantity-control">
-                        <button class="quantity-btn" onclick="decreaseQuantity(1)">-</button>
-                        <span class="quantity-display" id="quantity-1">1</span>
-                        <button class="quantity-btn" onclick="increaseQuantity(1)">+</button>
-                    </div>
-                    <button class="order-btn" onclick="placeOrder(1)">下单</button>
-                </div>
-
-                <!-- 示例商品 2 -->
-                <div class="inventory-item">
-                    <div class="item-image"></div>
-                    <div class="item-name">商品 B</div>
-                    <div class="item-stock">库存: 50</div>
-                    <div class="item-price">¥199.00</div>
-                    <div class="quantity-control">
-                        <button class="quantity-btn" onclick="decreaseQuantity(2)">-</button>
-                        <span class="quantity-display" id="quantity-2">1</span>
-                        <button class="quantity-btn" onclick="increaseQuantity(2)">+</button>
-                    </div>
-                    <button class="order-btn" onclick="placeOrder(2)">下单</button>
-                </div>
-
-                <!-- 示例商品 3 -->
-                <div class="inventory-item">
-                    <div class="item-image"></div>
-                    <div class="item-name">商品 C</div>
-                    <div class="item-stock">库存: 75</div>
-                    <div class="item-price">¥149.00</div>
-                    <div class="quantity-control">
-                        <button class="quantity-btn" onclick="decreaseQuantity(3)">-</button>
-                        <span class="quantity-display" id="quantity-3">1</span>
-                        <button class="quantity-btn" onclick="increaseQuantity(3)">+</button>
-                    </div>
-                    <button class="order-btn" onclick="placeOrder(3)">下单</button>
-                </div>
+            <h2>库存列表</h2>
+            <div class="inventory-grid" id="inventoryGrid">
+                <!-- 商品将通过 JavaScript 动态加载 -->
             </div>
         </main>
     </div>
 
     <script>
-        function increaseQuantity(id) {
-            const quantityElement = document.getElementById(`quantity-${id}`);
-            let quantity = parseInt(quantityElement.textContent);
-            quantityElement.textContent = quantity + 1;
+        // 页面加载时获取商品数据
+        window.onload = function() {
+            loadInventory();
+        };
+
+        // 加载库存数据
+        function loadInventory() {
+            fetch('http://localhost:8080/api/inventory/all')
+                .then(response => response.json())
+                .then(products => {
+                    const grid = document.getElementById('inventoryGrid');
+                    grid.innerHTML = products.map(product => `
+                        <div class="inventory-item" id="product-${product.id}">
+                            <div class="item-image"></div>
+                            <div class="item-name">${product.name}</div>
+                            <div class="item-stock ${getStockClass(product.stock, product.minStock)}">
+                                库存: ${product.stock}
+                            </div>
+                            <div class="item-price">¥${product.price?.toFixed(2) || '0.00'}</div>
+                            <div class="quantity-control">
+                                <button class="quantity-btn" onclick="decreaseQuantity(${product.id})" 
+                                        ${product.stock === 0 ? 'disabled' : ''}>-</button>
+                                <span class="quantity-display" id="quantity-${product.id}">1</span>
+                                <button class="quantity-btn" onclick="increaseQuantity(${product.id})"
+                                        ${product.stock === 0 ? 'disabled' : ''}>+</button>
+                            </div>
+                            <button class="order-btn" onclick="placeOrder(${product.id})"
+                                    ${product.stock === 0 ? 'disabled' : ''}>
+                                ${product.stock === 0 ? '暂无库存' : '下单'}
+                            </button>
+                        </div>
+                    `).join('');
+                })
+                .catch(error => {
+                    console.error('加载商品数据失败:', error);
+                    alert('加载商品数据失败，请刷新页面重试');
+                });
         }
 
+        // 判断库存状态的辅助函数
+        function getStockClass(stock, minStock) {
+            if (stock === 0) return 'out-of-stock';
+            if (stock <= minStock) return 'low-stock';
+            return '';
+        }
+
+        // 减少数量
         function decreaseQuantity(id) {
             const quantityElement = document.getElementById(`quantity-${id}`);
             let quantity = parseInt(quantityElement.textContent);
@@ -165,9 +174,47 @@
             }
         }
 
+        // 增加数量
+        function increaseQuantity(id) {
+            const quantityElement = document.getElementById(`quantity-${id}`);
+            const productElement = document.getElementById(`product-${id}`);
+            const stockText = productElement.querySelector('.item-stock').textContent;
+            const currentStock = parseInt(stockText.match(/\d+/)[0]);
+            
+            let quantity = parseInt(quantityElement.textContent);
+            if (quantity < currentStock) {
+                quantityElement.textContent = quantity + 1;
+            } else {
+                alert('不能超过当前库存量！');
+            }
+        }
+
+        // 下单功能
         function placeOrder(id) {
-            const quantity = document.getElementById(`quantity-${id}`).textContent;
-            alert(`已下单商品 ${id}，数量：${quantity}`);
+            const quantity = parseInt(document.getElementById(`quantity-${id}`).textContent);
+            const productName = document.querySelector(`#product-${id} .item-name`).textContent;
+            
+            fetch('http://localhost:8080/api/inventory/order', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    productName: productName,
+                    quantity: quantity
+                })
+            })
+            .then(response => response.text())
+            .then(result => {
+                alert(result);
+                if (result === '下单成功') {
+                    loadInventory(); // 刷新库存显示
+                }
+            })
+            .catch(error => {
+                console.error('下单失败:', error);
+                alert('下单失败，请稍后重试');
+            });
         }
     </script>
 </body>

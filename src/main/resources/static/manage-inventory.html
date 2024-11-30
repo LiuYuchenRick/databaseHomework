@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>库存管理 - 仓库管理系统</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .inventory-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            padding: 20px;
+        }
+        
+        .inventory-card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .btn {
+            padding: 5px 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        .btn-primary { background: #007BFF; color: white; }
+        .btn-success { background: #28a745; color: white; }
+        
+        .add-form {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="navbar">
+            <h1>库存管理</h1>
+        </header>
+        
+        <aside class="sidebar">
+            <ul>
+                <li><a href="index.html">畅销产品</a></li>
+                <li><a href="inventory.html">库存</a></li>
+                <li><a href="manage-inventory.html">库存管理</a></li>
+            </ul>
+        </aside>
+        
+        <main class="main-content">
+            <div class="add-form">
+                <h2>新增商品</h2>
+                <form id="addProductForm">
+                    <div class="form-group">
+                        <label for="productName">商品名称</label>
+                        <input type="text" id="productName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="stock">库存数量</label>
+                        <input type="number" id="stock" required min="0">
+                    </div>
+                    <div class="form-group">
+                        <label for="price">价格</label>
+                        <input type="number" id="price" required min="0" step="0.01">
+                    </div>
+                    <div class="form-group">
+                        <label for="minStock">最小库存</label>
+                        <input type="number" id="minStock" required min="0">
+                    </div>
+                    <button type="submit" class="btn btn-primary">添加商品</button>
+                </form>
+            </div>
+
+            <h2>当前库存</h2>
+            <div class="inventory-grid" id="inventoryGrid">
+                <!-- 商品卡片将通过 JavaScript 动态添加 -->
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // 加载库存数据
+        function loadInventory() {
+            fetch('http://localhost:8080/api/inventory/all')
+                .then(response => response.json())
+                .then(products => {
+                    const grid = document.getElementById('inventoryGrid');
+                    grid.innerHTML = '';
+                    products.forEach(product => {
+                        grid.innerHTML += `
+                            <div class="inventory-card">
+                                <h3>${product.name}</h3>
+                                <p>当前库存: ${product.stock}</p>
+                                <p>价格: ¥${product.price}</p>
+                                <p>最小库存: ${product.minStock}</p>
+                                <div class="action-buttons">
+                                    <input type="number" min="1" value="1" id="restock-${product.id}" style="width: 60px;">
+                                    <button class="btn btn-success" onclick="restockProduct(${product.id})">补货</button>
+                                </div>
+                            </div>
+                        `;
+                    });
+                })
+                .catch(error => console.error('加载库存失败:', error));
+        }
+
+        // 补货功能
+        function restockProduct(id) {
+            const quantity = document.getElementById(`restock-${id}`).value;
+            fetch(`http://localhost:8080/api/inventory/restock/${id}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ quantity: parseInt(quantity) })
+            })
+            .then(response => response.text())
+            .then(result => {
+                alert(result);
+                loadInventory();
+            })
+            .catch(error => {
+                console.error('补货失败:', error);
+                alert('补货失败，请稍后重试');
+            });
+        }
+
+        // 添加新商品
+        document.getElementById('addProductForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const productData = {
+                name: document.getElementById('productName').value,
+                stock: parseInt(document.getElementById('stock').value),
+                price: parseFloat(document.getElementById('price').value),
+                minStock: parseInt(document.getElementById('minStock').value)
+            };
+
+            fetch('http://localhost:8080/api/inventory/add', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(productData)
+            })
+            .then(response => response.text())
+            .then(result => {
+                alert(result);
+                this.reset();
+                loadInventory();
+            })
+            .catch(error => {
+                console.error('添加商品失败:', error);
+                alert('添加商品失败，请稍后重试');
+            });
+        });
+
+        // 页面加载时获取库存数据
+        loadInventory();
+    </script>
+</body>
+</html> 

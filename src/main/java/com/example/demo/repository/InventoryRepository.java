@@ -3,8 +3,9 @@ package com.example.demo.repository;
 import com.example.demo.model.Inventory; // 确保导入语句正确
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+import java.util.Optional;
 
 @Repository
 public interface InventoryRepository extends JpaRepository<Inventory, Long> {
-    // 你可以在这里定义一些查询数据库的方法
+    Optional<Inventory> findByName(String name);
 }

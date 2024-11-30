@@ -13,7 +13,7 @@ public class Inventory {
 
     private String name;
     private int stock;
-    private double price;
+    private Double price;
     private String imageUrl;
     private int minStock;
     private int salesCount;
@@ -43,11 +43,11 @@ public class Inventory {
         this.stock = stock;
     }
 
-    public double getPrice() {
+    public Double getPrice() {
         return price;
     }
 
-    public void setPrice(double price) {
+    public void setPrice(Double price) {
         this.price = price;
     }
 

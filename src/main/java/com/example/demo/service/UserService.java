@@ -17,4 +17,17 @@ public class UserService {
         }
         return userRepository.save(user);
     }
+    
+    public User login(String username, String password) {
+        // 根据用户名查找用户
+        User user = userRepository.findByUsername(username)
+            .orElseThrow(() -> new RuntimeException("用户不存在"));
+        
+        // 验证密码
+        if (!user.getPassword().equals(password)) {
+            throw new RuntimeException("密码错误");
+        }
+        
+        return user;
+    }
 }

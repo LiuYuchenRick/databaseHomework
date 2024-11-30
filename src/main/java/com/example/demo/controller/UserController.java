@@ -51,4 +51,14 @@ public class UserController {
         log.info("测试接口被访问");
         return ResponseEntity.ok("后端服务正常运行中");
     }
+
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody User loginUser) {
+        try {
+            User user = userService.login(loginUser.getUsername(), loginUser.getPassword());
+            return ResponseEntity.ok(user);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("登录失败：" + e.getMessage());
+        }
+    }
 }
