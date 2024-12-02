@@ -133,6 +133,8 @@
         // 补货功能
         function restockProduct(id) {
             const quantity = document.getElementById(`restock-${id}`).value;
+            console.log(`正在补货，商品ID: ${id}, 数量: ${quantity}`);
+            
             fetch(`http://localhost:8080/api/inventory/restock/${id}`, {
                 method: 'POST',
                 headers: {
@@ -140,14 +142,22 @@
                 },
                 body: JSON.stringify({ quantity: parseInt(quantity) })
             })
-            .then(response => response.text())
+            .then(response => {
+                if (!response.ok) {
+                    return response.text().then(text => {
+                        throw new Error(text || '补货请求失败');
+                    });
+                }
+                return response.text();
+            })
             .then(result => {
+                console.log('补货成功:', result);
                 alert(result);
                 loadInventory();
             })
             .catch(error => {
                 console.error('补货失败:', error);
-                alert('补货失败，请稍后重试');
+                alert('补货失败：' + error.message);
             });
         }
 

@@ -1,26 +1,41 @@
 package com.example.demo.service;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.demo.model.InventoryOverview;
-import com.example.demo.repository.InventoryRepository;
 import com.example.demo.model.Inventory;
 import com.example.demo.model.SaleOrder;
-import com.example.demo.repository.SaleOrderRepository;
+import com.example.demo.mapper.InventoryMapper;
+import com.example.demo.mapper.SaleOrderMapper;
+import com.example.demo.mapper.PurchaseRecordMapper;
+import com.example.demo.mapper.SupplierMapper;
+import com.example.demo.model.PurchaseRecord;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
+@Slf4j
 public class InventoryService {
     @Autowired
-    private InventoryRepository inventoryRepository;
-
+    private InventoryMapper inventoryMapper;
+    
     @Autowired
-    private SaleOrderRepository saleOrderRepository;
+    private SaleOrderMapper saleOrderMapper;
+    
+    @Autowired
+    private PurchaseRecordMapper purchaseRecordMapper;
+    
+    @Autowired
+    private SupplierMapper supplierMapper;
+
+
 
     public InventoryOverview getInventoryOverview() {
-        List<Inventory> inventories = inventoryRepository.findAll();
+        List<Inventory> inventories = inventoryMapper.findAll();
         
         int totalStock = inventories.stream()
             .mapToInt(Inventory::getStock)
@@ -33,57 +48,143 @@ public class InventoryService {
         int outOfStock = (int) inventories.stream()
             .filter(i -> i.getStock() == 0)
             .count();
-            
+     
         return new InventoryOverview(totalStock, lowStock, outOfStock);
     }
 
     @Transactional
-    public String createOrder(String productName, Integer quantity) {
+    public String createOrder(String productName, Integer quantity, Long userId) {
         try {
-            Inventory inventory = inventoryRepository.findByName(productName)
-                .orElseThrow(() -> new RuntimeException("商品不存在"));
+            Inventory inventory = inventoryMapper.findByName(productName);
+            if (inventory == null) {
+                return "商品不存在";
+            }
             
             if (inventory.getStock() < quantity) {
                 return "库存不足";
             }
             
-            // 减少库存
-            inventory.setStock(inventory.getStock() - quantity);
-            // 增加销量
-            inventory.setSalesCount(inventory.getSalesCount() + quantity);
-            inventoryRepository.save(inventory);
-            
             // 创建订单
-            SaleOrder order = new SaleOrder(productName, quantity);
-            saleOrderRepository.save(order);
+            SaleOrder order = new SaleOrder();
+            order.setProductName(productName);
+            order.setQuantity(quantity);
+            order.setUserId(userId);
+            order.setOrderTime(LocalDateTime.now());
+            saleOrderMapper.insert(order);
             
+            // 减少库存和增加销量
+            inventory.setStock(inventory.getStock() - quantity);
+            inventory.setSalesCount(inventory.getSalesCount() + quantity);
+            
+            // 如果更新后的库存小于最小库存，直接在这里补货
+            if (inventory.getStock() < inventory.getMinStock()) {
+                Long supplierId = supplierMapper.findSupplierIdByProductName(productName);
+                if (supplierId != null) {
+                    inventory.setStock(inventory.getStock() + 100);
+                    // 记录采购信息
+                    PurchaseRecord record = new PurchaseRecord(
+                        productName,
+                        100,
+                        supplierId
+                    );
+                    purchaseRecordMapper.insert(record);
+                }
+            }
+            
+            inventoryMapper.update(inventory);
             return "下单成功";
         } catch (Exception e) {
+            log.error("下单失败", e);
             throw new RuntimeException("下单失败：" + e.getMessage());
         }
     }
 
     public List<Inventory> getAllInventory() {
-        return inventoryRepository.findAll();
+        return inventoryMapper.findAll();
     }
 
     @Transactional
-    public void restockProduct(Long id, Integer quantity) {
-        Inventory inventory = inventoryRepository.findById(id)
-            .orElseThrow(() -> new RuntimeException("商品不存在"));
-        inventory.setStock(inventory.getStock() + quantity);
-        inventoryRepository.save(inventory);
+    public void restockProduct(Long id, int quantity) {
+        // 获取商品信息
+        Inventory product = inventoryMapper.findById(id);
+        if (product == null) {
+            throw new RuntimeException("商品不存在");
+        }
+        
+        // 获取供应商信息
+        Long supplierId = supplierMapper.findSupplierIdByProductName(product.getName());
+        if (supplierId == null) {
+            throw new RuntimeException("未找到该商品的供应商信息");
+        }
+        
+        // 更新库存
+        product.setStock(product.getStock() + quantity);
+        inventoryMapper.update(product);
+        
+        // 记录采购信息
+        PurchaseRecord record = new PurchaseRecord(
+            product.getName(),
+            quantity,
+            supplierId
+        );
+        purchaseRecordMapper.insert(record);
     }
 
     @Transactional
     public void addProduct(Inventory product) {
         // 检查商品名是否已存在
-        if (inventoryRepository.findByName(product.getName()).isPresent()) {
+        if (inventoryMapper.findByName(product.getName()) != null) {
             throw new RuntimeException("商品名称已存在");
         }
         
-        // 设置初始销量为0
+        // 设置初始值
         product.setSalesCount(0);
-        inventoryRepository.save(product);
+        product.setCreateTime(LocalDateTime.now());
+        inventoryMapper.insert(product);
     }
+    
+    public Inventory getProductById(Long id) {
+        Inventory inventory = inventoryMapper.findById(id);
+        if (inventory == null) {
+            throw new RuntimeException("商品不存在");
+        }
+        return inventory;
+    }
+    
+    @Transactional
+    public void updateProduct(Inventory product) {
+        Inventory existingProduct = inventoryMapper.findById(product.getId());
+        if (existingProduct == null) {
+            throw new RuntimeException("商品不存在");
+        }
+        
+        // 检查商品名是否被其他商品使用
+        Inventory productWithSameName = inventoryMapper.findByName(product.getName());
+        if (productWithSameName != null && !productWithSameName.getId().equals(product.getId())) {
+            throw new RuntimeException("商品名称已被使用");
+        }
+        
+        inventoryMapper.update(product);
+    }
+    
+    @Transactional
+    public void deleteProduct(Long id) {
+        Inventory inventory = inventoryMapper.findById(id);
+        if (inventory == null) {
+            throw new RuntimeException("商品不存在");
+        }
+        
+        // 检查是否有相关订单
+        if (saleOrderMapper.countByProductName(inventory.getName()) > 0) {
+            throw new RuntimeException("该商品有关联订单，无法删除");
+        }
+        
+        inventoryMapper.delete(id);
+    }
+    
+    public List<Inventory> getLowStockProducts() {
+        return inventoryMapper.findLowStock();
+    }
+
+   
 }

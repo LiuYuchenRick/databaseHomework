@@ -255,6 +255,7 @@
         document.getElementById('registerForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
+            // 获取表单数据
             const formData = {
                 username: document.getElementById('username').value.trim(),
                 password: document.getElementById('password').value.trim(),
@@ -262,30 +263,30 @@
                 address: document.getElementById('address').value.trim()
             };
 
-            console.log('准备发送的数据:', formData);
-
             try {
+                // 打印发送的数据，用于调试
+                console.log('发送的数据:', JSON.stringify(formData));
+
                 const response = await fetch('http://localhost:8080/api/users/register', {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json'
+                        'Content-Type': 'application/json'
                     },
-                    credentials: 'include',
                     body: JSON.stringify(formData)
                 });
 
-                console.log('响应状态:', response.status);
-                
-                const data = await response.json();
-                console.log('响应数据:', data);
-
-                if (response.ok) {
-                    alert('注册成功！');
-                    window.location.href = '/src/main/resources/static/login.html';
-                } else {
-                    alert('注册失败：' + (data.message || JSON.stringify(data)));
+                // 先检查响应状态
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(errorText);
                 }
+
+                // 尝试解析响应
+                const result = await response.text();
+                console.log('服务器响应:', result);
+
+                alert('注册成功！');
+                window.location.href = 'login.html';
             } catch (error) {
                 console.error('注册错误:', error);
                 alert('注册失败：' + error.message);

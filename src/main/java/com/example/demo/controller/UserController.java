@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestMethod;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/users")
@@ -28,21 +29,13 @@ public class UserController {
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody User user) {
         try {
-            log.info("收到注册请求，用户数据：{}", user);
-            
-            // 添加参数验证
-            if (user.getUsername() == null || user.getPassword() == null) {
-                log.warn("用户名或密码为空");
-                return ResponseEntity.badRequest().body("用户名和密码不能为空");
-            }
+            log.info("接收到的注册数据: {}", user);
             
             User registeredUser = userService.registerUser(user);
-            log.info("用户注册成功：{}", registeredUser);
-            return ResponseEntity.ok(registeredUser);
-            
+            return ResponseEntity.ok("注册成功");
         } catch (Exception e) {
             log.error("注册失败", e);
-            return ResponseEntity.badRequest().body("注册失败：" + e.getMessage());
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
@@ -53,12 +46,15 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody User loginUser) {
+    public ResponseEntity<?> login(@RequestBody Map<String, String> credentials) {
         try {
-            User user = userService.login(loginUser.getUsername(), loginUser.getPassword());
+            User user = userService.login(
+                credentials.get("username"), 
+                credentials.get("password")
+            );
             return ResponseEntity.ok(user);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("登录失败：" + e.getMessage());
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 }

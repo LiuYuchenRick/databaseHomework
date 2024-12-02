@@ -4,30 +4,59 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.model.User;
-import com.example.demo.repository.UserRepository;
+import com.example.demo.mapper.UserMapper;
+import java.time.LocalDateTime;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
+@Slf4j
 public class UserService {
     @Autowired
-    private UserRepository userRepository;
+    private UserMapper userMapper;
     
     public User registerUser(User user) {
-        if (userRepository.existsByUsername(user.getUsername())) {
+        // 验证用户名
+        if (user.getUsername() == null || user.getUsername().trim().isEmpty()) {
+            throw new RuntimeException("用户名不能为空");
+        }
+        
+        // 验证手机号
+        if (user.getPhone() == null || !user.getPhone().matches("\\d{11}")) {
+            throw new RuntimeException("请输入有效的手机号");
+        }
+        
+        // 验证地址
+        if (user.getAddress() == null || user.getAddress().trim().isEmpty()) {
+            throw new RuntimeException("地址不能为空");
+        }
+        
+        User existingUser = userMapper.findByUsername(user.getUsername());
+        if (existingUser != null) {
             throw new RuntimeException("用户名已存在");
         }
-        return userRepository.save(user);
+        
+        user.setCreateTime(LocalDateTime.now());
+        userMapper.insert(user);
+        return user;
     }
     
     public User login(String username, String password) {
-        // 根据用户名查找用户
-        User user = userRepository.findByUsername(username)
-            .orElseThrow(() -> new RuntimeException("用户不存在"));
-        
-        // 验证密码
-        if (!user.getPassword().equals(password)) {
+        User user = userMapper.findByUsername(username);
+        if (user == null) {
+            throw new RuntimeException("用户不存在");
+        }
+        if (!password.equals(user.getPassword())) {
             throw new RuntimeException("密码错误");
         }
-        
         return user;
+    }
+    
+    public void updatePassword(Long userId, String newPassword) {
+        User user = userMapper.findById(userId);
+        if (user == null) {
+            throw new RuntimeException("用户不存在");
+        }
+        user.setPassword(newPassword);
+        userMapper.update(user);
     }
 }

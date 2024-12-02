@@ -16,6 +16,7 @@ public class CorsConfig {
         // 允许跨域的源
         config.addAllowedOrigin("http://127.0.0.1:5500");
         config.addAllowedOrigin("http://localhost:5500");
+        config.addAllowedOrigin("http://localhost:8080");
         
         // 允许跨域的头
         config.addAllowedHeader("*");
