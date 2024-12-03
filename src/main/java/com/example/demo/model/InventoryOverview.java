@@ -1,25 +1,26 @@
 package com.example.demo.model;
 
+import java.math.BigDecimal;
+
 public class InventoryOverview {
-    private int totalStock;  // 总库存
-    private int lowStock;    // 低库存
-    private int outOfStock;  // 缺货
+    private int totalStock;      // 总库存
+    private int totalSales;      // 总销售量
+    private BigDecimal totalAmount;  // 总销售额
 
     // 构造函数
-    public InventoryOverview(int totalStock, int lowStock, int outOfStock) {
+    public InventoryOverview(int totalStock, int totalSales, BigDecimal totalAmount) {
         this.totalStock = totalStock;
-        this.lowStock = lowStock;
-        this.outOfStock = outOfStock;
+        this.totalSales = totalSales;
+        this.totalAmount = totalAmount;
     }
 
     // Getter 和 Setter
-    // 用来读取和修改数据
     public int getTotalStock() { return totalStock; }
     public void setTotalStock(int totalStock) { this.totalStock = totalStock; }
 
-    public int getLowStock() { return lowStock; }
-    public void setLowStock(int lowStock) { this.lowStock = lowStock; }
+    public int getTotalSales() { return totalSales; }
+    public void setTotalSales(int totalSales) { this.totalSales = totalSales; }
 
-    public int getOutOfStock() { return outOfStock; }
-    public void setOutOfStock(int outOfStock) { this.outOfStock = outOfStock; }
+    public BigDecimal getTotalAmount() { return totalAmount; }
+    public void setTotalAmount(BigDecimal totalAmount) { this.totalAmount = totalAmount; }
 }

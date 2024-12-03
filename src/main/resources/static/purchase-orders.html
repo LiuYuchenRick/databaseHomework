@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>采购订单 - 仓库管理系统</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .orders-container {
+            padding: 20px;
+        }
+        
+        .order-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .order-table th, .order-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .order-table th {
+            background: #28a745;
+            color: white;
+        }
+        
+        .order-table tr:hover {
+            background: #f5f5f5;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="navbar">
+            <h1>采购订单管理</h1>
+        </header>
+        
+        <aside class="sidebar">
+            <ul>
+                <li><a href="manage-inventory.html">库存管理</a></li>
+                <li><a href="sale-orders.html">销售订单</a></li>
+                <li><a href="purchase-orders.html">采购订单</a></li>
+                <li><a href="index.html">返回用户界面</a></li>
+            </ul>
+        </aside>
+        
+        <main class="main-content">
+            <div class="orders-container">
+                <h2>采购订单列表</h2>
+                <table class="order-table">
+                    <thead>
+                        <tr>
+                            <th>订单编号</th>
+                            <th>商品名称</th>
+                            <th>数量</th>
+                            <th>供应商</th>
+                            <th>采购时间</th>
+                        </tr>
+                    </thead>
+                    <tbody id="purchaseTableBody">
+                        <!-- 订单数据将通过JavaScript动态加载 -->
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        function loadPurchaseOrders() {
+            fetch('http://localhost:8080/api/orders/purchases')
+                .then(response => response.json())
+                .then(orders => {
+                    const tbody = document.getElementById('purchaseTableBody');
+                    tbody.innerHTML = orders.map(order => `
+                        <tr>
+                            <td>${order.id}</td>
+                            <td>${order.productName}</td>
+                            <td>${order.quantity}</td>
+                            <td>${order.supplierName}</td>
+                            <td>${new Date(order.purchaseTime).toLocaleString()}</td>
+                        </tr>
+                    `).join('');
+                })
+                .catch(error => {
+                    console.error('加载采购订单失败:', error);
+                    alert('加载采购订单失败，请刷新页面重试');
+                });
+        }
+
+        // 页面加载时执行
+        window.onload = loadPurchaseOrders;
+    </script>
+</body>
+</html> 

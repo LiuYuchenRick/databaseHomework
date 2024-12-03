@@ -23,5 +23,12 @@ public interface SaleOrderMapper {
     @Select("SELECT * FROM sale_orders ORDER BY order_time DESC")
     List<SaleOrder> findAll();
     
+    @Select("SELECT COUNT(*) FROM sale_orders WHERE product_name = #{productName}")
     int countByProductName(String productName);
+    
+    @Select("SELECT so.*, u.username as user_name " +
+            "FROM sale_orders so " +
+            "LEFT JOIN users u ON so.user_id = u.id " +
+            "ORDER BY so.order_time DESC")
+    List<SaleOrder> findAllWithUserInfo();
 } 

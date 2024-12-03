@@ -15,6 +15,8 @@ import com.example.demo.model.PurchaseRecord;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.math.BigDecimal;
+import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
@@ -35,21 +37,12 @@ public class InventoryService {
 
 
     public InventoryOverview getInventoryOverview() {
-        List<Inventory> inventories = inventoryMapper.findAll();
-        
-        int totalStock = inventories.stream()
-            .mapToInt(Inventory::getStock)
-            .sum();
-            
-        int lowStock = (int) inventories.stream()
-            .filter(i -> i.getStock() < i.getMinStock())
-            .count();
-            
-        int outOfStock = (int) inventories.stream()
-            .filter(i -> i.getStock() == 0)
-            .count();
-     
-        return new InventoryOverview(totalStock, lowStock, outOfStock);
+        Map<String, Object> result = inventoryMapper.getInventoryOverview();
+        return new InventoryOverview(
+            ((Number) result.get("total_stock")).intValue(),
+            ((Number) result.get("total_sales")).intValue(),
+            new BigDecimal(result.get("total_amount").toString())
+        );
     }
 
     @Transactional
@@ -186,5 +179,8 @@ public class InventoryService {
         return inventoryMapper.findLowStock();
     }
 
-   
+    public List<Inventory> getTopSellingProducts() {
+        return inventoryMapper.findTopSellingProducts();
+    }
+
 }

@@ -8,9 +8,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PathVariable;
 
+
 import com.example.demo.model.Inventory;
 import com.example.demo.model.InventoryOverview;
 import com.example.demo.service.InventoryService;
+
 import java.util.Map;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +26,7 @@ public class InventoryController {
     @Autowired
     private InventoryService inventoryService;
 
-    @GetMapping  // 处理 GET 请求
+    @GetMapping("/overview")
     public ResponseEntity<InventoryOverview> getInventoryOverview() {
         return ResponseEntity.ok(inventoryService.getInventoryOverview());
     }
@@ -70,5 +72,9 @@ public class InventoryController {
         }
     }
 
+    @GetMapping("/top-selling")
+    public ResponseEntity<List<Inventory>> getTopSellingProducts() {
+        return ResponseEntity.ok(inventoryService.getTopSellingProducts());
+    }
 
 }

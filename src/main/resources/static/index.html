@@ -76,7 +76,7 @@
             <ul>
                 <li><a href="index.html">畅销产品</a></li>
                 <li><a href="inventory.html">库存</a></li>
-                <li><a href="manage-inventory.html">库存管理</a></li>
+                <li><a href="manage-inventory.html">管理界面</a></li>
             </ul>
         </aside>
 
@@ -85,36 +85,68 @@
             
             <!-- 畅销产品展示区 -->
             <h3>畅销产品 TOP 3</h3>
-            <div class="top-products">
-                <div class="product-card" style="position: relative;">
-                    <div class="rank-badge">1</div>
-                    <div class="product-image"></div>
-                    <div class="product-name">智能手表 Pro</div>
-                    <div class="product-sales">月销量：2,456件</div>
-                </div>
-
-                <div class="product-card" style="position: relative;">
-                    <div class="rank-badge">2</div>
-                    <div class="product-image"></div>
-                    <div class="product-name">无线耳机 Max</div>
-                    <div class="product-sales">月销量：1,897件</div>
-                </div>
-
-                <div class="product-card" style="position: relative;">
-                    <div class="rank-badge">3</div>
-                    <div class="product-image"></div>
-                    <div class="product-name">便携充电宝</div>
-                    <div class="product-sales">月销量：1,654件</div>
-                </div>
+            <div class="top-products" id="topProductsContainer">
+                <!-- 动态加载的畅销产品将显示在这里 -->
             </div>
 
-            <!-- Example of a Dashboard Widget -->
-            <div class="dashboard-widget">
+            <script>
+                function loadTopProducts() {
+                    fetch('http://localhost:8080/api/inventory/top-selling')
+                        .then(response => response.json())
+                        .then(products => {
+                            const container = document.getElementById('topProductsContainer');
+                            container.innerHTML = products.map((product, index) => `
+                                <div class="product-card" style="position: relative;">
+                                    <div class="rank-badge">${index + 1}</div>
+                                    <div class="product-name">${product.name}</div>
+                                    <div class="product-sales">月销量：${product.salesCount}件</div>
+                                </div>
+                            `).join('');
+                        })
+                        .catch(error => {
+                            console.error('加载畅销产品失败:', error);
+                            document.getElementById('topProductsContainer').innerHTML = 
+                                '<p>加载畅销产品数据失败</p>';
+                        });
+                }
+
+                // 页面加载时执行
+                window.onload = function() {
+                    loadTopProducts();
+                };
+            </script>
+
+            <!-- 库存概览 -->
+            <div class="dashboard-widget" id="overviewContainer">
                 <h3>库存概览</h3>
-                <p>总库存：1,200 件</p>
-                <p>低库存：15 件</p>
-                <p>缺货：5 件</p>
+                <p>总库存：<span id="totalStock">加载中...</span> 件</p>
+                <p>总销量：<span id="totalSales">加载中...</span> 件</p>
+                <p>总销售额：¥<span id="totalAmount">加载中...</span></p>
             </div>
+
+            <script>
+                function loadInventoryOverview() {
+                    fetch('http://localhost:8080/api/inventory/overview')
+                        .then(response => response.json())
+                        .then(data => {
+                            document.getElementById('totalStock').textContent = data.totalStock;
+                            document.getElementById('totalSales').textContent = data.totalSales;
+                            document.getElementById('totalAmount').textContent = 
+                                data.totalAmount?.toFixed(2) || '0.00';
+                        })
+                        .catch(error => {
+                            console.error('加载库存概览失败:', error);
+                            document.getElementById('overviewContainer').innerHTML = 
+                                '<p>加载库存概览数据失败</p>';
+                        });
+                }
+
+                // 页面加载时执行
+                window.onload = function() {
+                    loadTopProducts();
+                    loadInventoryOverview();
+                };
+            </script>
         </main>
     </div>
 </body>

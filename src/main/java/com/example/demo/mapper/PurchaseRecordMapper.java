@@ -22,4 +22,20 @@ public interface PurchaseRecordMapper {
             "LEFT JOIN suppliers s ON po.supplier_id = s.id " +
             "WHERE po.product_name = #{productName}")
     List<PurchaseRecord> findByProductName(String productName);
+    
+    @Select("SELECT po.*, s.name as supplier_name " +
+            "FROM purchase_orders po " +
+            "LEFT JOIN suppliers s ON po.supplier_id = s.id " +
+            "WHERE po.id = #{id}")
+    PurchaseRecord findById(Long id);
+    
+    @Delete("DELETE FROM purchase_orders WHERE id = #{id}")
+    void delete(Long id);
+    
+    @Update("UPDATE purchase_orders SET " +
+            "quantity = #{quantity}, " +
+            "supplier_id = #{supplierId}, " +
+            "purchase_time = #{purchaseTime} " +
+            "WHERE id = #{id}")
+    void update(PurchaseRecord record);
 } 

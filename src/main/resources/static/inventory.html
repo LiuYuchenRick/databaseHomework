@@ -106,7 +106,7 @@
             <ul>
                 <li><a href="index.html">畅销产品</a></li>
                 <li><a href="inventory.html">库存</a></li>
-                <li><a href="manage-inventory.html">库存管理</a></li>
+                <li><a href="manage-inventory.html">管理界面</a></li>
             </ul>
         </aside>
 
@@ -132,7 +132,6 @@
                     const grid = document.getElementById('inventoryGrid');
                     grid.innerHTML = products.map(product => `
                         <div class="inventory-item" id="product-${product.id}">
-                            <div class="item-image"></div>
                             <div class="item-name">${product.name}</div>
                             <div class="item-stock ${getStockClass(product.stock, product.minStock)}">
                                 库存: ${product.stock}
