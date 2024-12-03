@@ -27,4 +27,8 @@ public class OrderService {
     public List<PurchaseRecord> getAllPurchaseOrders() {
         return purchaseRecordMapper.findAll();
     }
+
+    public List<SaleOrder> getUserOrders(Long userId) {
+        return saleOrderMapper.findByUserId(userId);
+    }
 } 

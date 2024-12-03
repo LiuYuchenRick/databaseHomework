@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>采购订单 - 仓库管理系统</title>
+    <title>我的订单 - 仓库管理系统</title>
     <link rel="stylesheet" href="styles.css">
     <style>
         .orders-container {
@@ -26,44 +26,49 @@
         }
         
         .order-table th {
-            background: #28a745;
+            background: #007BFF;
             color: white;
         }
         
         .order-table tr:hover {
             background: #f5f5f5;
         }
+
+        .no-orders {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <header class="navbar">
-            <h1>采购订单管理</h1>
+            <h1>我的订单</h1>
         </header>
         
         <aside class="sidebar">
             <ul>
-                <li><a href="manage-inventory.html">库存管理</a></li>
-                <li><a href="sale-orders.html">销售订单</a></li>
-                <li><a href="purchase-orders.html">采购订单</a></li>
+                <li><a href="index.html">畅销产品</a></li>
+                <li><a href="inventory.html">库存</a></li>
+                <li><a href="my-orders.html">我的订单</a></li>
 
             </ul>
         </aside>
         
         <main class="main-content">
             <div class="orders-container">
-                <h2>采购订单列表</h2>
+                <h2>我的订单记录</h2>
                 <table class="order-table">
                     <thead>
                         <tr>
                             <th>订单编号</th>
                             <th>商品名称</th>
                             <th>数量</th>
-                            <th>供应商</th>
-                            <th>采购时间</th>
+                            <th>下单时间</th>
                         </tr>
                     </thead>
-                    <tbody id="purchaseTableBody">
+                    <tbody id="orderTableBody">
                         <!-- 订单数据将通过JavaScript动态加载 -->
                     </tbody>
                 </table>
@@ -72,29 +77,44 @@
     </div>
 
     <script>
-        function loadPurchaseOrders() {
-            fetch('http://localhost:8080/api/orders/purchases')
+        window.onload = function() {
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            if (!currentUser) {
+                alert('请先登录！');
+                window.location.href = 'login.html';
+                return;
+            }
+            loadMyOrders(currentUser.id);
+        };
+
+        function loadMyOrders(userId) {
+            fetch(`http://localhost:8080/api/orders/user/${userId}`)
                 .then(response => response.json())
                 .then(orders => {
-                    const tbody = document.getElementById('purchaseTableBody');
+                    const tbody = document.getElementById('orderTableBody');
+                    if (orders.length === 0) {
+                        tbody.innerHTML = `
+                            <tr>
+                                <td colspan="4" class="no-orders">暂无订单记录</td>
+                            </tr>
+                        `;
+                        return;
+                    }
+                    
                     tbody.innerHTML = orders.map(order => `
                         <tr>
                             <td>${order.id}</td>
                             <td>${order.productName}</td>
                             <td>${order.quantity}</td>
-                            <td>${order.supplierName}</td>
-                            <td>${new Date(order.purchaseTime).toLocaleString()}</td>
+                            <td>${new Date(order.orderTime).toLocaleString()}</td>
                         </tr>
                     `).join('');
                 })
                 .catch(error => {
-                    console.error('加载采购订单失败:', error);
-                    alert('加载采购订单失败，请刷新页面重试');
+                    console.error('加载订单失败:', error);
+                    alert('加载订单失败，请稍后重试');
                 });
         }
-
-        // 页面加载时执行
-        window.onload = loadPurchaseOrders;
     </script>
 </body>
 </html> 

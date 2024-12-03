@@ -167,11 +167,7 @@ public class InventoryService {
             throw new RuntimeException("商品不存在");
         }
         
-        // 检查是否有相关订单
-        if (saleOrderMapper.countByProductName(inventory.getName()) > 0) {
-            throw new RuntimeException("该商品有关联订单，无法删除");
-        }
-        
+        // 直接删除商品，不检查订单关联
         inventoryMapper.delete(id);
     }
     

@@ -34,6 +34,7 @@
         
         .btn-primary { background: #007BFF; color: white; }
         .btn-success { background: #28a745; color: white; }
+        .btn-danger { background: #dc3545; color: white; }
         
         .add-form {
             background: white;
@@ -70,7 +71,7 @@
                 <li><a href="manage-inventory.html">库存管理</a></li>
                 <li><a href="sale-orders.html">销售订单</a></li>
                 <li><a href="purchase-orders.html">采购订单</a></li>
-                <li><a href="index.html">返回用户界面</a></li>
+
             </ul>
         </aside>
         
@@ -123,6 +124,7 @@
                                 <div class="action-buttons">
                                     <input type="number" min="1" value="1" id="restock-${product.id}" style="width: 60px;">
                                     <button class="btn btn-success" onclick="restockProduct(${product.id})">补货</button>
+                                    <button class="btn btn-danger" onclick="deleteProduct(${product.id})">删除</button>
                                 </div>
                             </div>
                         `;
@@ -193,6 +195,33 @@
 
         // 页面加载时获取库存数据
         loadInventory();
+
+        // 删除商品
+        function deleteProduct(id) {
+            if (!confirm('确定要删除这个商品吗？此操作不可恢复。')) {
+                return;
+            }
+            
+            fetch(`http://localhost:8080/api/inventory/delete/${id}`, {
+                method: 'DELETE'
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.text().then(text => {
+                        throw new Error(text || '删除失败');
+                    });
+                }
+                return response.text();
+            })
+            .then(result => {
+                alert('删除成功');
+                loadInventory();
+            })
+            .catch(error => {
+                console.error('删除失败:', error);
+                alert('删除失败：' + error.message);
+            });
+        }
     </script>
 </body>
 </html> 

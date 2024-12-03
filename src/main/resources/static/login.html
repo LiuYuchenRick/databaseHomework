@@ -172,6 +172,10 @@
                 }
                 
                 const data = await response.json();
+                localStorage.setItem('currentUser', JSON.stringify({
+                    id: parseInt(data.id),
+                    username: data.username
+                }));
                 alert('登录成功！');
                 window.location.href = '/src/main/resources/static/index.html';
             } catch (error) {

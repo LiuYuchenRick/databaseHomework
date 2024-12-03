@@ -106,7 +106,8 @@
             <ul>
                 <li><a href="index.html">畅销产品</a></li>
                 <li><a href="inventory.html">库存</a></li>
-                <li><a href="manage-inventory.html">管理界面</a></li>
+                <li><a href="my-orders.html">我的订单</a></li>
+
             </ul>
         </aside>
 
@@ -190,6 +191,13 @@
 
         // 下单功能
         function placeOrder(id) {
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            if (!currentUser) {
+                alert('请先登录！');
+                window.location.href = 'login.html';
+                return;
+            }
+
             const quantity = parseInt(document.getElementById(`quantity-${id}`).textContent);
             const productName = document.querySelector(`#product-${id} .item-name`).textContent;
             
@@ -200,14 +208,15 @@
                 },
                 body: JSON.stringify({
                     productName: productName,
-                    quantity: quantity
+                    quantity: quantity,
+                    userId: Number(currentUser.id)
                 })
             })
             .then(response => response.text())
             .then(result => {
                 alert(result);
                 if (result === '下单成功') {
-                    loadInventory(); // 刷新库存显示
+                    loadInventory();
                 }
             })
             .catch(error => {

@@ -39,4 +39,14 @@ public class OrderController {
             return ResponseEntity.badRequest().build();
         }
     }
+
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<SaleOrder>> getUserOrders(@PathVariable Long userId) {
+        try {
+            List<SaleOrder> orders = orderService.getUserOrders(userId);
+            return ResponseEntity.ok(orders);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(null);
+        }
+    }
 } 
