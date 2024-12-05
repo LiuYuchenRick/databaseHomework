@@ -3,151 +3,252 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>仓库管理系统 - 仪表盘</title>
+    <title>超市后台系统 - 总览</title>
     <link rel="stylesheet" href="styles.css">
     <style>
+        .dashboard-header {
+            margin-bottom: 2rem;
+        }
+
+        .dashboard-header h2 {
+            color: #1F2937;
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .dashboard-header p {
+            color: #6B7280;
+            font-size: 0.875rem;
+        }
+
         .top-products {
-            display: flex;
-            gap: 20px;
-            margin-top: 30px;
-            justify-content: space-between;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
         }
 
         .product-card {
+            position: relative;
             background: white;
-            border-radius: 10px;
-            padding: 20px;
-            flex: 1;
-            max-width: 300px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            text-align: center;
-            transition: transform 0.3s ease;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
         }
 
         .product-card:hover {
-            transform: translateY(-5px);
+            transform: translateY(-4px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
         }
 
         .product-image {
-            width: 200px;
+            width: 100%;
             height: 200px;
-            background: pink;
-            border-radius: 8px;
-            margin: 0 auto 15px;
+            background: #F3F4F6;
+            border-radius: 0.75rem;
+            margin-bottom: 1rem;
+            overflow: hidden;
+        }
+
+        .product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
 
         .product-name {
-            font-size: 1.2em;
-            font-weight: bold;
-            color: #333;
-            margin-bottom: 10px;
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #1F2937;
+            margin-bottom: 0.5rem;
         }
 
         .product-sales {
-            color: #007BFF;
-            font-size: 1.1em;
+            color: #4F46E5;
+            font-size: 1rem;
+            font-weight: 500;
         }
 
         .rank-badge {
             position: absolute;
-            top: -10px;
-            left: -10px;
-            background: #FFD700;
-            width: 30px;
-            height: 30px;
+            top: -0.75rem;
+            left: -0.75rem;
+            background: #F59E0B;
+            width: 2.5rem;
+            height: 2.5rem;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: bold;
-            color: #333;
+            font-weight: 600;
+            color: white;
+            box-shadow: 0 4px 6px -1px rgba(245, 158, 11, 0.3);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.25rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-card h3 {
+            color: #6B7280;
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-card .value {
+            color: #1F2937;
+            font-size: 1.5rem;
+            font-weight: 600;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- Navigation Bar -->
         <header class="navbar">
-            <h1>仓库管理系统</h1>
+            <h1>超市后台系统</h1>
         </header>
         
-        <!-- Sidebar -->
         <aside class="sidebar">
             <ul>
-                <li><a href="index.html">畅销产品</a></li>
-                <li><a href="inventory.html">库存</a></li>
+                <li><a href="index.html" class="active">总览</a></li>
+                <li><a href="inventory.html">销售</a></li>
                 <li><a href="my-orders.html">我的订单</a></li>
+                <li><a href="manage-inventory.html">库存管理</a></li>
+                <li><a href="sale-orders.html">销售订单</a></li>
+                <li><a href="purchase-orders.html">采购订单</a></li>
             </ul>
         </aside>
 
-        <!-- Main Content -->
         <main class="main-content">
-            
-            <!-- 畅销产品展示区 -->
+            <div class="dashboard-header">
+                <h2>概览</h2>
+                <p>查看最新的销售数据和畅销商品</p>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3>今日销售额</h3>
+                    <div class="value" id="totalSales">¥0.00</div>
+                </div>
+                <div class="stat-card">
+                    <h3>客流量</h3>
+                    <div class="value" id="orderCount">0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>采购数量</h3>
+                    <div class="value" id="purchaseCount">0</div>
+                </div>
+            </div>
+
             <h3>畅销产品 TOP 3</h3>
             <div class="top-products" id="topProductsContainer">
                 <!-- 动态加载的畅销产品将显示在这里 -->
             </div>
-
-            <script>
-                function loadTopProducts() {
-                    fetch('http://localhost:8080/api/inventory/top-selling')
-                        .then(response => response.json())
-                        .then(products => {
-                            const container = document.getElementById('topProductsContainer');
-                            container.innerHTML = products.map((product, index) => `
-                                <div class="product-card" style="position: relative;">
-                                    <div class="rank-badge">${index + 1}</div>
-                                    <div class="product-name">${product.name}</div>
-                                    <div class="product-sales">月销量：${product.salesCount}件</div>
-                                </div>
-                            `).join('');
-                        })
-                        .catch(error => {
-                            console.error('加载畅销产品失败:', error);
-                            document.getElementById('topProductsContainer').innerHTML = 
-                                '<p>加载畅销产品数据失败</p>';
-                        });
-                }
-
-                // 页面加载时执行
-                window.onload = function() {
-                    loadTopProducts();
-                };
-            </script>
-
-            <!-- 库存概览 -->
-            <div class="dashboard-widget" id="overviewContainer">
-                <h3>库存概览</h3>
-                <p>总库存：<span id="totalStock">加载中...</span> 件</p>
-                <p>总销量：<span id="totalSales">加载中...</span> 件</p>
-                <p>总销售额：¥<span id="totalAmount">加载中...</span></p>
-            </div>
-
-            <script>
-                function loadInventoryOverview() {
-                    fetch('http://localhost:8080/api/inventory/overview')
-                        .then(response => response.json())
-                        .then(data => {
-                            document.getElementById('totalStock').textContent = data.totalStock;
-                            document.getElementById('totalSales').textContent = data.totalSales;
-                            document.getElementById('totalAmount').textContent = 
-                                data.totalAmount?.toFixed(2) || '0.00';
-                        })
-                        .catch(error => {
-                            console.error('加载库存概览失败:', error);
-                            document.getElementById('overviewContainer').innerHTML = 
-                                '<p>加载库存概览数据失败</p>';
-                        });
-                }
-
-                // 页面加载时执行
-                window.onload = function() {
-                    loadTopProducts();
-                    loadInventoryOverview();
-                };
-            </script>
         </main>
     </div>
+
+    <script>
+        function loadTotalSales() {
+            fetch('http://localhost:8080/api/orders/total-sales')
+                .then(response => response.json())
+                .then(amount => {
+                    document.getElementById('totalSales').textContent = 
+                        `¥${parseFloat(amount).toFixed(2)}`;
+                })
+                .catch(error => {
+                    console.error('加载总销售额失败:', error);
+                });
+        }
+
+        function loadTopProducts() {
+            fetch('http://localhost:8080/api/inventory/top-selling')
+                .then(response => response.json())
+                .then(products => {
+                    const container = document.getElementById('topProductsContainer');
+                    container.innerHTML = products.map((product, index) => `
+                        <div class="product-card" style="position: relative;">
+                            <div class="rank-badge">${index + 1}</div>
+                            <div class="product-name">${product.name}</div>
+                            <div class="product-sales">月销量：${product.salesCount}件</div>
+                        </div>
+                    `).join('');
+                })
+                .catch(error => {
+                    console.error('加载畅销产品失败:', error);
+                    document.getElementById('topProductsContainer').innerHTML = 
+                        '<p>加载畅销产品数据失败</p>';
+                });
+        }
+
+        function loadStatistics() {
+            // 获取销售统计数据
+            fetch('http://localhost:8080/api/orders/statistics')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('totalSales').textContent = 
+                        `¥${data.totalSales.toFixed(2)}`;
+                    document.getElementById('orderCount').textContent = 
+                        data.orderCount;
+                    document.getElementById('purchaseCount').textContent = 
+                        data.purchaseCount;
+                })
+                .catch(error => {
+                    console.error('加载统计数据失败:', error);
+                });
+        }
+
+        function loadOrderCount() {
+            fetch('http://localhost:8080/api/orders/count')
+                .then(response => response.json())
+                .then(count => {
+                    document.getElementById('orderCount').textContent = count;
+                })
+                .catch(error => {
+                    console.error('加载订单数量失败:', error);
+                });
+        }
+
+        function loadPurchaseCount() {
+            fetch('http://localhost:8080/api/orders/purchases/count')
+                .then(response => response.json())
+                .then(count => {
+                    document.getElementById('purchaseCount').textContent = count || '0';
+                })
+                .catch(error => {
+                    console.error('加载采购订单数量失败:', error);
+                    document.getElementById('purchaseCount').textContent = '0';
+                });
+        }
+
+        // 页面加载时执行
+        window.onload = function() {
+            loadTopProducts();
+            loadStatistics();
+            loadTotalSales();
+            loadOrderCount();
+            loadPurchaseCount();
+            
+            // 每隔5分钟刷新一次数据
+            setInterval(() => {
+                loadStatistics();
+                loadTotalSales();
+                loadOrderCount();
+                loadPurchaseCount();
+            }, 300000);
+        };
+    </script>
 </body>
 </html>

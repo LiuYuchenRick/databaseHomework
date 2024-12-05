@@ -2,61 +2,187 @@
 <html lang="zh">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>库存管理 - 仓库管理系统</title>
     <link rel="stylesheet" href="styles.css">
     <style>
-        .inventory-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 20px;
-            padding: 20px;
-        }
-        
-        .inventory-card {
-            background: white;
-            padding: 15px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        
-        .action-buttons {
+        .inventory-header {
+            margin-bottom: 2rem;
             display: flex;
-            gap: 10px;
-            margin-top: 10px;
+            justify-content: space-between;
+            align-items: flex-start;
         }
-        
-        .btn {
-            padding: 5px 10px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
+
+        .inventory-header h2 {
+            color: #1F2937;
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
         }
-        
-        .btn-primary { background: #007BFF; color: white; }
-        .btn-success { background: #28a745; color: white; }
-        .btn-danger { background: #dc3545; color: white; }
-        
+
+        .inventory-header p {
+            color: #6B7280;
+            font-size: 0.875rem;
+        }
+
+        .btn-add {
+            background: #4F46E5;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.2s;
+            margin-top: 0.5rem
+        }
+
+        .btn-add:hover {
+            background: #4338CA;
+        }
+
         .add-form {
             background: white;
-            padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 20px;
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
         }
-        
+
+        .add-form h2 {
+            color: #1F2937;
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+        }
+
         .form-group {
-            margin-bottom: 15px;
+            margin-bottom: 1.5rem;
         }
-        
+
         .form-group label {
             display: block;
-            margin-bottom: 5px;
+            color: #374151;
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
         }
-        
+
         .form-group input {
             width: 100%;
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
+            padding: 0.75rem 1rem;
+            border: 1px solid #E5E7EB;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+
+        .form-group input:focus {
+            border-color: #4F46E5;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+            outline: none;
+        }
+
+        .inventory-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            padding: 1.5rem 0;
+        }
+
+        .inventory-card {
+            background: white;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .inventory-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn {
+            padding: 0.75rem 1rem;
+            border: none;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: #4F46E5;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #4338CA;
+        }
+
+        .btn-success {
+            background: #10B981;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #059669;
+        }
+
+        .btn-danger {
+            background: #EF4444;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #DC2626;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 0.75rem;
+            margin-top: 1rem;
+        }
+
+        .restock-input {
+            width: 80px;
+            padding: 0.5rem;
+            border: 1px solid #E5E7EB;
+            border-radius: 0.5rem;
+            margin-right: 0.5rem;
+        }
+
+        .search-container {
+            margin: 1.5rem 0;
+            display: flex;
+            align-items: center;
+            background: white;
+            padding: 0.75rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .search-input {
+            width: 100%;
+            max-width: 400px;
+            padding: 0.75rem 1rem;
+            border: 1px solid #E5E7EB;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            color: #1F2937;
+            background-color: #F9FAFB;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        .search-input::placeholder {
+            color: #9CA3AF;
+        }
+
+        .search-input:focus {
+            border-color: #4F46E5;
+            background-color: white;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
         }
     </style>
 </head>
@@ -68,7 +194,10 @@
         
         <aside class="sidebar">
             <ul>
-                <li><a href="manage-inventory.html">库存管理</a></li>
+                <li><a href="index.html">总览</a></li>
+                <li><a href="inventory.html">销售</a></li>
+                <li><a href="my-orders.html">我的订单</a></li>
+                <li><a href="manage-inventory.html" class="active">库存管理</a></li>
                 <li><a href="sale-orders.html">销售订单</a></li>
                 <li><a href="purchase-orders.html">采购订单</a></li>
 
@@ -76,30 +205,16 @@
         </aside>
         
         <main class="main-content">
-            <div class="add-form">
-                <h2>新增商品</h2>
-                <form id="addProductForm">
-                    <div class="form-group">
-                        <label for="productName">商品名称</label>
-                        <input type="text" id="productName" required>
+            <div class="inventory-header">
+                <div>
+                    <h2>当前库存</h2>
+                    <p>管理所有商品的库存信息</p>
+                    <div class="search-container">
+                        <input type="text" id="searchInput" placeholder="搜索商品..." class="search-input">
                     </div>
-                    <div class="form-group">
-                        <label for="stock">库存数量</label>
-                        <input type="number" id="stock" required min="0">
-                    </div>
-                    <div class="form-group">
-                        <label for="price">价格</label>
-                        <input type="number" id="price" required min="0" step="0.01">
-                    </div>
-                    <div class="form-group">
-                        <label for="minStock">最小库存</label>
-                        <input type="number" id="minStock" required min="0">
-                    </div>
-                    <button type="submit" class="btn btn-primary">添加商品</button>
-                </form>
+                </div>
+                <a href="add-product.html" class="btn-add">新增商品</a>
             </div>
-
-            <h2>当前库存</h2>
             <div class="inventory-grid" id="inventoryGrid">
                 <!-- 商品卡片将通过 JavaScript 动态添加 -->
             </div>
@@ -112,26 +227,50 @@
             fetch('http://localhost:8080/api/inventory/all')
                 .then(response => response.json())
                 .then(products => {
-                    const grid = document.getElementById('inventoryGrid');
-                    grid.innerHTML = '';
-                    products.forEach(product => {
-                        grid.innerHTML += `
-                            <div class="inventory-card">
-                                <h3>${product.name}</h3>
-                                <p>当前库存: ${product.stock}</p>
-                                <p>价格: ¥${product.price}</p>
-                                <p>最小库存: ${product.minStock}</p>
-                                <div class="action-buttons">
-                                    <input type="number" min="1" value="1" id="restock-${product.id}" style="width: 60px;">
-                                    <button class="btn btn-success" onclick="restockProduct(${product.id})">补货</button>
-                                    <button class="btn btn-danger" onclick="deleteProduct(${product.id})">删除</button>
-                                </div>
-                            </div>
-                        `;
-                    });
+                    allProducts = products; // 保存所有商品数据
+                    renderProducts(products); // 渲染商品
                 })
                 .catch(error => console.error('加载库存失败:', error));
         }
+
+        // 添加渲染商品的函数
+        function renderProducts(products) {
+            const grid = document.getElementById('inventoryGrid');
+            grid.innerHTML = '';
+            products.forEach(product => {
+                grid.innerHTML += `
+                    <div class="inventory-card">
+                        <h3>${product.name}</h3>
+                        <p>当前库存: ${product.stock}</p>
+                        <p>价格: ¥${product.price}</p>
+                        <p>最小库存: ${product.minStock}</p>
+                        <div class="action-buttons">
+                            <input type="number" min="1" value="1" id="restock-${product.id}" style="width: 60px;">
+                            <button class="btn btn-success" onclick="restockProduct(${product.id})">补货</button>
+                            <button class="btn btn-danger" onclick="deleteProduct(${product.id})">删除</button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        // 添加搜索功能
+        function searchProducts(keyword) {
+            const filteredProducts = allProducts.filter(product => 
+                product.name.toLowerCase().includes(keyword.toLowerCase())
+            );
+            renderProducts(filteredProducts);
+        }
+
+        // 修改页面加载时的事件监听
+        window.onload = function() {
+            loadInventory();
+            
+            // 添加搜索输入框事件监听
+            document.getElementById('searchInput').addEventListener('input', function(e) {
+                searchProducts(e.target.value);
+            });
+        };
 
         // 补货功能
         function restockProduct(id) {
@@ -164,37 +303,6 @@
             });
         }
 
-        // 添加新商品
-        document.getElementById('addProductForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const productData = {
-                name: document.getElementById('productName').value,
-                stock: parseInt(document.getElementById('stock').value),
-                price: parseFloat(document.getElementById('price').value),
-                minStock: parseInt(document.getElementById('minStock').value)
-            };
-
-            fetch('http://localhost:8080/api/inventory/add', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(productData)
-            })
-            .then(response => response.text())
-            .then(result => {
-                alert(result);
-                this.reset();
-                loadInventory();
-            })
-            .catch(error => {
-                console.error('添加商品失败:', error);
-                alert('添加商品失败，请稍后重试');
-            });
-        });
-
-        // 页面加载时获取库存数据
-        loadInventory();
 
         // 删除商品
         function deleteProduct(id) {

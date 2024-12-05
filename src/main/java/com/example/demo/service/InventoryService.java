@@ -175,8 +175,8 @@ public class InventoryService {
         return inventoryMapper.findLowStock();
     }
 
-    public List<Inventory> getTopSellingProducts() {
-        return inventoryMapper.findTopSellingProducts();
+    public List<Inventory> getTopSellingProducts(int limit) {
+        return inventoryMapper.findTopSelling(limit);
     }
 
 }

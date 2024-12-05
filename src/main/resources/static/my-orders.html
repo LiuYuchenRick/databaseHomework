@@ -6,38 +6,63 @@
     <title>我的订单 - 仓库管理系统</title>
     <link rel="stylesheet" href="styles.css">
     <style>
-        .orders-container {
-            padding: 20px;
+        .orders-header {
+            margin-bottom: 2rem;
         }
-        
+
+        .orders-header h2 {
+            color: #1F2937;
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .orders-header p {
+            color: #6B7280;
+            font-size: 0.875rem;
+        }
+
+        .orders-container {
+            padding: 1.5rem;
+        }
+
         .order-table {
             width: 100%;
             border-collapse: collapse;
             background: white;
-            border-radius: 8px;
+            border-radius: 1rem;
             overflow: hidden;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
-        
-        .order-table th, .order-table td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid #eee;
-        }
-        
+
         .order-table th {
-            background: #007BFF;
+            background: #4F46E5;
             color: white;
+            font-weight: 500;
+            padding: 1rem 1.5rem;
+            text-align: left;
+            font-size: 0.875rem;
         }
-        
+
+        .order-table td {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #E5E7EB;
+            color: #374151;
+        }
+
+        .order-table tr:last-child td {
+            border-bottom: none;
+        }
+
         .order-table tr:hover {
-            background: #f5f5f5;
+            background: #F3F4F6;
         }
 
         .no-orders {
             text-align: center;
-            padding: 20px;
-            color: #666;
+            padding: 2rem;
+            color: #6B7280;
+            font-size: 0.875rem;
         }
     </style>
 </head>
@@ -49,16 +74,21 @@
         
         <aside class="sidebar">
             <ul>
-                <li><a href="index.html">畅销产品</a></li>
-                <li><a href="inventory.html">库存</a></li>
-                <li><a href="my-orders.html">我的订单</a></li>
-
+                <li><a href="index.html">总览</a></li>
+                <li><a href="inventory.html">销售</a></li>
+                <li><a href="my-orders.html" class="active">我的订单</a></li>
+                <li><a href="manage-inventory.html">库存管理</a></li>
+                <li><a href="sale-orders.html">销售订单</a></li>
+                <li><a href="purchase-orders.html">采购订单</a></li>
             </ul>
         </aside>
         
         <main class="main-content">
+            <div class="orders-header">
+                <h2>订单记录</h2>
+                <p>查看您的所有订单历史</p>
+            </div>
             <div class="orders-container">
-                <h2>我的订单记录</h2>
                 <table class="order-table">
                     <thead>
                         <tr>

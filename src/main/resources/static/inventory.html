@@ -6,113 +6,189 @@
     <title>库存管理 - 仓库管理系统</title>
     <link rel="stylesheet" href="styles.css">
     <style>
+        .inventory-header {
+            margin-bottom: 2rem;
+        }
+
+        .inventory-header h2 {
+            color: #1F2937;
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .inventory-header p {
+            color: #6B7280;
+            font-size: 0.875rem;
+        }
+
         .inventory-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 20px;
-            padding: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            padding: 1.5rem 0;
         }
 
         .inventory-item {
             background: white;
-            padding: 15px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
             position: relative;
         }
 
+        .inventory-item:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
         .item-image {
-            height: 150px;
-            background: #f0f0f0;
-            margin-bottom: 10px;
-            border-radius: 4px;
+            width: 100%;
+            height: 180px;
+            background: #F3F4F6;
+            border-radius: 0.75rem;
+            margin-bottom: 1rem;
+            overflow: hidden;
         }
 
         .item-name {
-            font-size: 1.1em;
-            font-weight: bold;
-            margin-bottom: 8px;
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #1F2937;
+            margin-bottom: 0.75rem;
         }
 
         .item-stock {
-            color: #666;
-            margin-bottom: 8px;
+            color: #6B7280;
+            font-size: 0.875rem;
+            margin-bottom: 0.5rem;
         }
 
         .item-price {
-            color: #e44d26;
-            font-weight: bold;
-            margin-bottom: 12px;
+            color: #4F46E5;
+            font-size: 1.125rem;
+            font-weight: 500;
+            margin-bottom: 1rem;
         }
 
         .quantity-control {
             display: flex;
             align-items: center;
-            gap: 10px;
-            margin-bottom: 12px;
+            gap: 1rem;
+            margin-top: 1rem;
+            margin-bottom: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid #E5E7EB;
         }
 
         .quantity-btn {
-            width: 30px;
-            height: 30px;
+            background: #F3F4F6;
             border: none;
-            background: #007BFF;
-            color: white;
-            border-radius: 4px;
+            border-radius: 0.5rem;
+            width: 2rem;
+            height: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             cursor: pointer;
+            transition: all 0.2s;
+            color: #4F46E5;
         }
 
-        .quantity-btn:disabled {
-            background: #ccc;
-            cursor: not-allowed;
+        .quantity-btn:hover {
+            background: #E5E7EB;
         }
 
         .quantity-display {
-            min-width: 40px;
-            text-align: center;
+            font-size: 1rem;
+            color: #1F2937;
+            font-weight: 500;
         }
 
-        .order-btn {
-            width: 100%;
-            padding: 8px;
-            background: #28a745;
+        .add-to-cart {
+            background: #4F46E5;
             color: white;
             border: none;
-            border-radius: 4px;
+            border-radius: 0.5rem;
+            padding: 0.75rem 1rem;
+            width: 100%;
+            font-weight: 500;
             cursor: pointer;
+            transition: all 0.2s;
         }
 
-        .order-btn:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-        }
-
-        .low-stock {
-            color: #ffc107;
+        .add-to-cart:hover {
+            background: #4338CA;
         }
 
         .out-of-stock {
-            color: #dc3545;
+            color: #DC2626;
+        }
+
+        .low-stock {
+            color: #F59E0B;
+        }
+
+        .search-container {
+            margin: 1.5rem 0;
+            display: flex;
+            align-items: center;
+            background: white;
+            padding: 0.75rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .search-input {
+            width: 100%;
+            max-width: 400px;
+            padding: 0.75rem 1rem;
+            border: 1px solid #E5E7EB;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            color: #1F2937;
+            background-color: #F9FAFB;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        .search-input::placeholder {
+            color: #9CA3AF;
+        }
+
+        .search-input:focus {
+            border-color: #4F46E5;
+            background-color: white;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
         }
     </style>
 </head>
 <body>
     <div class="container">
         <header class="navbar">
-            <h1>仓库管理系统</h1>
+            <h1>库存</h1>
         </header>
         
         <aside class="sidebar">
             <ul>
-                <li><a href="index.html">畅销产品</a></li>
-                <li><a href="inventory.html">库存</a></li>
+                <li><a href="index.html">总览</a></li>
+                <li><a href="inventory.html" class="active">销售</a></li>
                 <li><a href="my-orders.html">我的订单</a></li>
-
+                <li><a href="manage-inventory.html">库存管理</a></li>
+                <li><a href="sale-orders.html">销售订单</a></li>
+                <li><a href="purchase-orders.html">采购订单</a></li>
             </ul>
         </aside>
 
         <main class="main-content">
-            <h2>库存列表</h2>
+            <div class="inventory-header">
+                <h2>销售</h2>
+                <p>统计销售记录</p>
+                <div class="search-container">
+                    <input type="text" id="searchInput" placeholder="搜索商品..." class="search-input">
+                </div>
+            </div>
             <div class="inventory-grid" id="inventoryGrid">
                 <!-- 商品将通过 JavaScript 动态加载 -->
             </div>
@@ -120,43 +196,65 @@
     </div>
 
     <script>
-        // 页面加载时获取商品数据
-        window.onload = function() {
-            loadInventory();
-        };
+        // 保存所有商品数据
+        let allProducts = [];
 
-        // 加载库存数据
+        // 修改loadInventory函数
         function loadInventory() {
             fetch('http://localhost:8080/api/inventory/all')
                 .then(response => response.json())
                 .then(products => {
-                    const grid = document.getElementById('inventoryGrid');
-                    grid.innerHTML = products.map(product => `
-                        <div class="inventory-item" id="product-${product.id}">
-                            <div class="item-name">${product.name}</div>
-                            <div class="item-stock ${getStockClass(product.stock, product.minStock)}">
-                                库存: ${product.stock}
-                            </div>
-                            <div class="item-price">¥${product.price?.toFixed(2) || '0.00'}</div>
-                            <div class="quantity-control">
-                                <button class="quantity-btn" onclick="decreaseQuantity(${product.id})" 
-                                        ${product.stock === 0 ? 'disabled' : ''}>-</button>
-                                <span class="quantity-display" id="quantity-${product.id}">1</span>
-                                <button class="quantity-btn" onclick="increaseQuantity(${product.id})"
-                                        ${product.stock === 0 ? 'disabled' : ''}>+</button>
-                            </div>
-                            <button class="order-btn" onclick="placeOrder(${product.id})"
-                                    ${product.stock === 0 ? 'disabled' : ''}>
-                                ${product.stock === 0 ? '暂无库存' : '下单'}
-                            </button>
-                        </div>
-                    `).join('');
+                    allProducts = products; // 保存所有商品数据
+                    renderProducts(products); // 渲染商品
                 })
                 .catch(error => {
                     console.error('加载商品数据失败:', error);
                     alert('加载商品数据失败，请刷新页面重试');
                 });
         }
+
+        // 添加渲染商品的函数
+        function renderProducts(products) {
+            const grid = document.getElementById('inventoryGrid');
+            grid.innerHTML = products.map(product => `
+                <div class="inventory-item" id="product-${product.id}">
+                    <div class="item-name">${product.name}</div>
+                    <div class="item-stock ${getStockClass(product.stock, product.minStock)}">
+                        库存: ${product.stock}
+                    </div>
+                    <div class="item-price">¥${product.price?.toFixed(2) || '0.00'}</div>
+                    <div class="quantity-control">
+                        <button class="quantity-btn" onclick="decreaseQuantity(${product.id})" 
+                                ${product.stock === 0 ? 'disabled' : ''}>-</button>
+                        <span class="quantity-display" id="quantity-${product.id}">1</span>
+                        <button class="quantity-btn" onclick="increaseQuantity(${product.id})"
+                                ${product.stock === 0 ? 'disabled' : ''}>+</button>
+                    </div>
+                    <button class="add-to-cart" onclick="placeOrder(${product.id})"
+                            ${product.stock === 0 ? 'disabled' : ''}>
+                        ${product.stock === 0 ? '暂无库存' : '售出'}
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        // 添加搜索功能
+        function searchProducts(keyword) {
+            const filteredProducts = allProducts.filter(product => 
+                product.name.toLowerCase().includes(keyword.toLowerCase())
+            );
+            renderProducts(filteredProducts);
+        }
+
+        // 页面加载时的事件监听
+        window.onload = function() {
+            loadInventory();
+            
+            // 添加搜索输入框事件监听
+            document.getElementById('searchInput').addEventListener('input', function(e) {
+                searchProducts(e.target.value);
+            });
+        };
 
         // 判断库存状态的辅助函数
         function getStockClass(stock, minStock) {

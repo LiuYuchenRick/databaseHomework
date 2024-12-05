@@ -3,6 +3,7 @@ package com.example.demo.mapper;
 import org.apache.ibatis.annotations.*;
 import com.example.demo.model.SaleOrder;
 import java.util.List;
+import java.math.BigDecimal;
 
 @Mapper
 public interface SaleOrderMapper {
@@ -31,4 +32,12 @@ public interface SaleOrderMapper {
             "LEFT JOIN users u ON so.user_id = u.id " +
             "ORDER BY so.order_time DESC")
     List<SaleOrder> findAllWithUserInfo();
+    
+    @Select("SELECT COALESCE(SUM(s.quantity * i.price), 0) " +
+            "FROM sale_orders s " +
+            "JOIN inventory i ON s.product_name = i.name")
+    BigDecimal calculateTotalSales();
+    
+    @Select("SELECT COUNT(*) FROM sale_orders")
+    Integer countOrders();
 } 

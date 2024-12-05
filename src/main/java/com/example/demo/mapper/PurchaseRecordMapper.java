@@ -38,4 +38,7 @@ public interface PurchaseRecordMapper {
             "purchase_time = #{purchaseTime} " +
             "WHERE id = #{id}")
     void update(PurchaseRecord record);
+    
+    @Select("SELECT COUNT(*) FROM purchase_orders")
+    Integer countPurchases();
 } 

@@ -7,6 +7,7 @@ import com.example.demo.model.PurchaseRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 
@@ -30,5 +31,15 @@ public class OrderService {
 
     public List<SaleOrder> getUserOrders(Long userId) {
         return saleOrderMapper.findByUserId(userId);
+    }
+
+    public BigDecimal getTotalSales() {
+        return saleOrderMapper.calculateTotalSales();
+    }
+    public Integer getOrderCount() {
+        return saleOrderMapper.countOrders();
+    }
+    public Integer getPurchaseCount() {
+        return purchaseRecordMapper.countPurchases();
     }
 } 

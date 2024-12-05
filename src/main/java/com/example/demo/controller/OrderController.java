@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 
@@ -49,4 +50,20 @@ public class OrderController {
             return ResponseEntity.badRequest().body(null);
         }
     }
+
+    @GetMapping("/total-sales")
+    public ResponseEntity<BigDecimal> getTotalSales() {
+        return ResponseEntity.ok(orderService.getTotalSales());
+    }
+
+    @GetMapping("/count")
+    public ResponseEntity<Integer> getOrderCount() {
+        return ResponseEntity.ok(orderService.getOrderCount());
+    }
+
+    @GetMapping("/purchases/count")
+    public ResponseEntity<Integer> getPurchaseCount() {
+        return ResponseEntity.ok(orderService.getPurchaseCount());
+    }
+    
 } 

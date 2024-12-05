@@ -75,7 +75,13 @@ public class InventoryController {
 
     @GetMapping("/top-selling")
     public ResponseEntity<List<Inventory>> getTopSellingProducts() {
-        return ResponseEntity.ok(inventoryService.getTopSellingProducts());
+        try {
+            List<Inventory> topProducts = inventoryService.getTopSellingProducts(3); // 限制为前3个
+            return ResponseEntity.ok(topProducts);
+        } catch (Exception e) {
+            log.error("获取畅销产品失败", e);
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     @DeleteMapping("/delete/{id}")
