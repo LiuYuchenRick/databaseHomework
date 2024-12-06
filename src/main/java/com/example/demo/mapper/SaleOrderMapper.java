@@ -40,4 +40,10 @@ public interface SaleOrderMapper {
     
     @Select("SELECT COUNT(*) FROM sale_orders")
     Integer countOrders();
+
+    @Select("SELECT so.id, so.product_name, so.quantity, so.order_time, i.price " +
+    "FROM sale_orders so " +
+    "LEFT JOIN inventory i ON so.product_name = i.name " +
+    "ORDER BY so.order_time DESC")
+    List<SaleOrder> findAllWithPrice();
 } 

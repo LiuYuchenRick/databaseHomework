@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>员工管理 - 仓库管理系统</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .employee-header {
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .employee-header h2 {
+            color: #1F2937;
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .employee-header p {
+            color: #6B7280;
+            font-size: 0.875rem;
+        }
+
+        .btn-add-employee {
+            background: #4F46E5;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .btn-add-employee:hover {
+            background: #4338CA;
+        }
+
+        .search-container {
+            margin: 1.5rem 0;
+            display: flex;
+            align-items: center;
+            background: white;
+            padding: 0.75rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .search-input {
+            width: 100%;
+            max-width: 400px;
+            padding: 0.75rem 1rem;
+            border: 1px solid #E5E7EB;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            color: #1F2937;
+            background-color: #F9FAFB;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        .employee-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            padding: 1rem 0;
+        }
+
+        .employee-card {
+            background: white;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .employee-card h3 {
+            color: #1F2937;
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+        }
+
+        .employee-info {
+            margin-bottom: 1rem;
+            color: #4B5563;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 0.75rem;
+            margin-top: 1rem;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            border: none;
+            cursor: pointer;
+            font-size: 0.875rem;
+        }
+
+        .btn-edit {
+            background: #3B82F6;
+            color: white;
+        }
+
+        .btn-delete {
+            background: #EF4444;
+            color: white;
+        }
+
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 0.5rem;
+            width: 100%;
+            max-width: 500px;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #374151;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #D1D5DB;
+            border-radius: 0.375rem;
+        }
+
+        .modal-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .btn-primary {
+            background: #4F46E5;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            border: none;
+            font-weight: 500;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            min-width: 120px;
+        }
+
+        .btn-primary:hover {
+            background: #4338CA;
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #4F46E5;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            border: 1px solid #4F46E5;
+            font-weight: 500;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            min-width: 120px;
+        }
+
+        .btn-secondary:hover {
+            background: #EEF2FF;
+        }
+
+        .modal-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="navbar">
+            <h1>员工管理</h1>
+        </header>
+        
+        <aside class="sidebar">
+            <ul>
+                <li><a href="index.html">总览</a></li>
+                <li><a href="inventory.html">销售</a></li>
+                <li><a href="my-orders.html">我的订单</a></li>
+                <li><a href="manage-inventory.html">库存管理</a></li>
+                <li><a href="sale-orders.html">销售订单</a></li>
+                <li><a href="purchase-orders.html">采购订单</a></li>
+                <li><a href="employee-management.html" class="active">员工管理</a></li>
+            </ul>
+        </aside>
+        
+        <main class="main-content">
+            <div class="employee-header">
+                <div>
+                    <h2>员工管理</h2>
+                    <p>管理所有员工信息</p>
+                    <div class="search-container">
+                        <input type="text" id="searchInput" placeholder="搜索员工..." class="search-input">
+                    </div>
+                </div>
+                <button class="btn-add-employee" onclick="showAddEmployeeModal()">新增员工</button>
+            </div>
+            <div class="employee-grid" id="employeeGrid">
+                <!-- 员工卡片将通过JavaScript动态添加 -->
+            </div>
+        </main>
+    </div>
+
+    <div id="employeeModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <h3 id="modalTitle">新增员工</h3>
+            <form id="employeeForm">
+                <input type="hidden" id="employeeId">
+                <div class="form-group">
+                    <label for="name">姓名</label>
+                    <input type="text" id="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="level">职级</label>
+                    <select id="level" required>
+                        <option value="初级">初级</option>
+                        <option value="中级">中级</option>
+                        <option value="高级">高级</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="phone">电话</label>
+                    <input type="tel" id="phone" pattern="\d{11}" required>
+                </div>
+                <div class="form-group">
+                    <label for="position">岗位</label>
+                    <input type="text" id="position" required>
+                </div>
+                <div class="modal-buttons">
+                    <button type="submit" class="btn-primary">保存</button>
+                    <button type="button" class="btn-secondary" onclick="hideEmployeeModal()">取消</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let allEmployees = [];
+
+        function loadEmployees() {
+            fetch('http://localhost:8080/api/employees')
+                .then(response => response.json())
+                .then(employees => {
+                    allEmployees = employees;
+                    renderEmployees(employees);
+                })
+                .catch(error => console.error('加载员工数据失败:', error));
+        }
+
+        function renderEmployees(employees) {
+            const grid = document.getElementById('employeeGrid');
+            grid.innerHTML = employees.map(employee => `
+                <div class="employee-card">
+                    <h3>${employee.name}</h3>
+                    <div class="employee-info">
+                        <p>职级: ${employee.level}</p>
+                        <p>电话: ${employee.phone}</p>
+                        <p>岗位: ${employee.position}</p>
+                    </div>
+                    <div class="action-buttons">
+                        <button class="btn btn-edit" onclick="editEmployee(${employee.id})">编辑</button>
+                        <button class="btn btn-delete" onclick="deleteEmployee(${employee.id})">删除</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function searchEmployees(keyword) {
+            const filteredEmployees = allEmployees.filter(employee => 
+                employee.name.toLowerCase().includes(keyword.toLowerCase()) ||
+                employee.position.toLowerCase().includes(keyword.toLowerCase())
+            );
+            renderEmployees(filteredEmployees);
+        }
+
+        // 检查是否有权限访问
+        function checkAccess() {
+            const key = localStorage.getItem('employeeManagementKey');
+            if (!key || key !== '123456') {
+                const inputKey = prompt('请输入访问密钥:');
+                if (inputKey === '123456') {
+                    localStorage.setItem('employeeManagementKey', inputKey);
+                } else {
+                    alert('密钥错误，无法访问员工管理页面');
+                    window.location.href = 'index.html';
+                }
+            }
+        }
+
+        // 页面加载时检查权限
+        window.onload = function() {
+            checkAccess();
+            loadEmployees();
+            document.getElementById('searchInput').addEventListener('input', function(e) {
+                searchEmployees(e.target.value);
+            });
+        };
+
+        function showAddEmployeeModal() {
+            document.getElementById('modalTitle').textContent = '新增员工';
+            document.getElementById('employeeId').value = '';
+            document.getElementById('employeeForm').reset();
+            document.getElementById('employeeModal').style.display = 'flex';
+        }
+
+        function showEditEmployeeModal(employee) {
+            document.getElementById('modalTitle').textContent = '编辑员工';
+            document.getElementById('employeeId').value = employee.id;
+            document.getElementById('name').value = employee.name;
+            document.getElementById('level').value = employee.level;
+            document.getElementById('phone').value = employee.phone;
+            document.getElementById('position').value = employee.position;
+            document.getElementById('employeeModal').style.display = 'flex';
+        }
+
+        function hideEmployeeModal() {
+            document.getElementById('employeeModal').style.display = 'none';
+        }
+
+        function editEmployee(id) {
+            const employee = allEmployees.find(emp => emp.id === id);
+            if (employee) {
+                showEditEmployeeModal(employee);
+            }
+        }
+
+        function deleteEmployee(id) {
+            if (confirm('确定要删除这名员工吗？')) {
+                fetch(`http://localhost:8080/api/employees/${id}`, {
+                    method: 'DELETE'
+                })
+                .then(response => {
+                    if (response.ok) {
+                        loadEmployees();
+                    } else {
+                        throw new Error('删除失败');
+                    }
+                })
+                .catch(error => console.error('删除员工失败:', error));
+            }
+        }
+
+        // 表单提交处理
+        document.getElementById('employeeForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const employeeData = {
+                name: document.getElementById('name').value,
+                level: document.getElementById('level').value,
+                phone: document.getElementById('phone').value,
+                position: document.getElementById('position').value
+            };
+
+            const employeeId = document.getElementById('employeeId').value;
+            const url = employeeId 
+                ? `http://localhost:8080/api/employees/${employeeId}`
+                : 'http://localhost:8080/api/employees';
+            const method = employeeId ? 'PUT' : 'POST';
+
+            fetch(url, {
+                method: method,
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(employeeData)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.text().then(text => {
+                        throw new Error(text || '保存失败');
+                    });
+                }
+                return response.json();
+            })
+            .then(result => {
+                hideEmployeeModal();
+                loadEmployees();  // 重新加载员工列表
+                alert(employeeId ? '修改成功' : '添加成功');
+            })
+            .catch(error => {
+                console.error('保存失败:', error);
+                alert('保存失败：' + error.message);
+            });
+        });
+
+        function checkEmployeeAccess(event) {
+            event.preventDefault();
+            const key = localStorage.getItem('employeeManagementKey');
+            if (!key || key !== '123456') {
+                const inputKey = prompt('请输入访问密钥:');
+                if (inputKey === '123456') {
+                    localStorage.setItem('employeeManagementKey', inputKey);
+                    window.location.href = 'employee-management.html';
+                } else {
+                    alert('密钥错误，无法访问员工管理页面');
+                }
+            } else {
+                window.location.href = 'employee-management.html';
+            }
+        }
+    </script>
+</body>
+</html>

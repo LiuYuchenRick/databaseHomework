@@ -17,7 +17,7 @@ public class SaleOrder {
     private Integer quantity;
     private Long userId;
     private LocalDateTime orderTime;
-    
+    private Double price;  // 从 Inventory 表获取的单价
     public SaleOrder() {}
     
     public SaleOrder(String productName, Integer quantity, Long userId) {
@@ -42,4 +42,12 @@ public class SaleOrder {
     
     public LocalDateTime getOrderTime() { return orderTime; }
     public void setOrderTime(LocalDateTime orderTime) { this.orderTime = orderTime; }
+    
+    public Double getPrice() { 
+        return price; 
+    }
+    
+    public void setPrice(Double price) { 
+        this.price = price; 
+    }
 }

@@ -42,4 +42,8 @@ public class OrderService {
     public Integer getPurchaseCount() {
         return purchaseRecordMapper.countPurchases();
     }
+
+    public List<SaleOrder> findAllSalesOrdersWithPrice() {
+        return saleOrderMapper.findAllWithPrice();
+    }
 } 

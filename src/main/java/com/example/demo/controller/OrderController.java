@@ -22,7 +22,7 @@ public class OrderController {
     @GetMapping("/sales")
     public ResponseEntity<List<SaleOrder>> getAllSalesOrders() {
         try {
-            List<SaleOrder> orders = orderService.getAllSalesOrders();
+            List<SaleOrder> orders = orderService.findAllSalesOrdersWithPrice();
             return ResponseEntity.ok(orders);
         } catch (Exception e) {
             log.error("获取销售订单失败", e);

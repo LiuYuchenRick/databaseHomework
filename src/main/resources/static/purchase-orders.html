@@ -22,47 +22,108 @@
             font-size: 0.875rem;
         }
 
-        .orders-container {
-            padding: 1.5rem;
+        .orders-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            padding: 1rem;
         }
 
-        .order-table {
-            width: 100%;
-            border-collapse: collapse;
+        .order-card {
             background: white;
-            border-radius: 1rem;
-            overflow: hidden;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
         }
 
-        .order-table th {
-            background: #4F46E5;
-            color: white;
-            font-weight: 500;
-            padding: 1rem 1.5rem;
-            text-align: left;
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .order-id {
+            color: #4B5563;
             font-size: 0.875rem;
         }
 
-        .order-table td {
-            padding: 1rem 1.5rem;
-            border-bottom: 1px solid #E5E7EB;
-            color: #374151;
+        .order-status {
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
         }
 
-        .order-table tr:last-child td {
-            border-bottom: none;
+        .status-completed {
+            background: #DEF7EC;
+            color: #03543F;
         }
 
-        .order-table tr:hover {
-            background: #F3F4F6;
+        .order-details {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .order-item {
+            display: flex;
+            justify-content: space-between;
+            color: #4B5563;
+            font-size: 0.875rem;
+        }
+
+        .order-total {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #E5E7EB;
+            display: flex;
+            justify-content: space-between;
+            font-weight: 600;
+            color: #1F2937;
+        }
+
+        .filters-container {
+            margin-top: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            max-width: 800px;
+        }
+
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .filter-input {
+            padding: 0.5rem;
+            border: 1px solid #E5E7EB;
+            border-radius: 0.375rem;
+            font-size: 0.875rem;
+            width: 120px;
+        }
+
+        .search-container {
+            margin-top: 1rem;
+            max-width: 400px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid #E5E7EB;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            transition: all 0.2s;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <header class="navbar">
-            <h1>采购订单管理</h1>
+            <h1>采购订单</h1>
         </header>
         
         <aside class="sidebar">
@@ -73,48 +134,41 @@
                 <li><a href="manage-inventory.html">库存管理</a></li>
                 <li><a href="sale-orders.html">销售订单</a></li>
                 <li><a href="purchase-orders.html" class="active">采购订单</a></li>
+                <li><a href="employee-management.html">员工管理</a></li>
             </ul>
         </aside>
         
         <main class="main-content">
             <div class="orders-header">
-                <h2>采购订单列表</h2>
-                <p>查看所有采购订单记录</p>
+                <h2>采购订单</h2>
+                <p>查看所有采购订单</p>
+                <div class="filters-container">
+                    <div class="filter-group">
+                        <label>数量范围</label>
+                        <input type="number" id="minQuantity" placeholder="最小数量" class="filter-input">
+                        <span>至</span>
+                        <input type="number" id="maxQuantity" placeholder="最大数量" class="filter-input">
+                    </div>
+                    <div class="search-container">
+                        <input type="text" id="searchInput" placeholder="搜索商品名称或供应商..." class="search-input">
+                    </div>
+                </div>
             </div>
-            <div class="orders-container">
-                <table class="order-table">
-                    <thead>
-                        <tr>
-                            <th>订单编号</th>
-                            <th>商品名称</th>
-                            <th>数量</th>
-                            <th>供应商</th>
-                            <th>采购时间</th>
-                        </tr>
-                    </thead>
-                    <tbody id="purchaseTableBody">
-                        <!-- 订单数据将通过JavaScript动态加载 -->
-                    </tbody>
-                </table>
+            <div class="orders-grid" id="ordersGrid">
+                <!-- 订单将通过JavaScript动态添加 -->
             </div>
         </main>
     </div>
 
     <script>
+        let allOrders = [];
+
         function loadPurchaseOrders() {
             fetch('http://localhost:8080/api/orders/purchases')
                 .then(response => response.json())
                 .then(orders => {
-                    const tbody = document.getElementById('purchaseTableBody');
-                    tbody.innerHTML = orders.map(order => `
-                        <tr>
-                            <td>${order.id}</td>
-                            <td>${order.productName}</td>
-                            <td>${order.quantity}</td>
-                            <td>${order.supplierName}</td>
-                            <td>${new Date(order.purchaseTime).toLocaleString()}</td>
-                        </tr>
-                    `).join('');
+                    allOrders = orders;
+                    renderOrders(orders);
                 })
                 .catch(error => {
                     console.error('加载采购订单失败:', error);
@@ -122,8 +176,61 @@
                 });
         }
 
-        // 页面加载时执行
-        window.onload = loadPurchaseOrders;
+        function filterOrders() {
+            const keyword = document.getElementById('searchInput').value.toLowerCase();
+            const minQuantity = Number(document.getElementById('minQuantity').value) || 0;
+            const maxQuantity = Number(document.getElementById('maxQuantity').value) || Infinity;
+
+            const filteredOrders = allOrders.filter(order => {
+                return (
+                    order.productName.toLowerCase().includes(keyword) &&
+                    order.quantity >= minQuantity &&
+                    order.quantity <= maxQuantity
+                );
+            });
+
+            renderOrders(filteredOrders);
+        }
+
+        function renderOrders(orders) {
+            const grid = document.getElementById('ordersGrid');
+            grid.innerHTML = orders.map(order => `
+                <div class="order-card">
+                    <div class="order-header">
+                        <span class="order-id">订单号: ${order.id}</span>
+                        <span class="order-status status-completed">已完成</span>
+                    </div>
+                    <div class="order-details">
+                        <div class="order-item">
+                            <span>商品名称:</span>
+                            <span>${order.productName}</span>
+                        </div>
+                        <div class="order-item">
+                            <span>数量:</span>
+                            <span>${order.quantity}</span>
+                        </div>
+                        <div class="order-item">
+                            <span>供应商:</span>
+                            <span>${order.supplierName}</span>
+                        </div>
+                        <div class="order-item">
+                            <span>采购时间:</span>
+                            <span>${new Date(order.purchaseTime).toLocaleString()}</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        window.onload = function() {
+            loadPurchaseOrders();
+            
+            // 为所有筛选输入框添加事件监听
+            const filterInputs = document.querySelectorAll('.filter-input, .search-input');
+            filterInputs.forEach(input => {
+                input.addEventListener('input', filterOrders);
+            });
+        };
     </script>
 </body>
 </html> 
