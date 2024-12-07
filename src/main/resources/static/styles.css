@@ -18,16 +18,22 @@ body {
     grid-template-columns: 280px 1fr;
     grid-template-rows: 70px 1fr;
     min-height: 100vh;
+    position: relative;
 }
 
 /* 导航栏 */
 .navbar {
-    grid-column: 1 / -1;
-    background: #4F46E5;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 70px;
+    background: #FF8BA0;
     padding: 0 2rem;
     display: flex;
     align-items: center;
     box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    z-index: 100;
 }
 
 .navbar h1 {
@@ -38,9 +44,16 @@ body {
 
 /* 侧边栏 */
 .sidebar {
+    position: fixed;
+    top: 70px;
+    left: 0;
+    bottom: 0;
+    width: 280px;
     background: white;
     padding: 1.5rem;
     border-right: 1px solid #E5E7EB;
+    overflow-y: auto;
+    z-index: 99;
 }
 
 .sidebar ul {
@@ -74,7 +87,11 @@ body {
 
 /* 主内容区 */
 .main-content {
+    grid-column: 2;
+    grid-row: 2;
     padding: 2rem;
+    position: relative;
+    z-index: 1;
     background: #F9FAFB;
 }
 
