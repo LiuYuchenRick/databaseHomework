@@ -196,7 +196,6 @@
             <ul>
                 <li><a href="index.html">总览</a></li>
                 <li><a href="inventory.html">销售</a></li>
-
                 <li><a href="manage-inventory.html" class="active">库存管理</a></li>
                 <li><a href="sale-orders.html">销售订单</a></li>
                 <li><a href="purchase-orders.html">采购订单</a></li>
@@ -247,7 +246,7 @@
                         <p>最小库存: ${product.minStock}</p>
                         <div class="action-buttons">
                             <input type="number" min="1" value="1" id="restock-${product.id}" style="width: 60px;">
-                            <button class="btn btn-success" onclick="restockProduct(${product.id})">补货</button>
+                            <button class="btn btn-success" onclick="restockProduct(${product.id})">进货</button>
                             <button class="btn btn-danger" onclick="deleteProduct(${product.id})">删除</button>
                         </div>
                     </div>
